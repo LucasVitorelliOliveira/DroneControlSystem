@@ -1,0 +1,34 @@
+﻿syntax = "proto3";
+
+// Define o namespace que as classes C# geradas terão.
+// Isso é crucial para usá-las de forma organizada no código.
+option csharp_namespace = "DroneControlSystem.Protos";
+
+package registration;
+
+// O serviço de registro que será implementado pelo servidor.
+service RegistrationService {
+  // O drone chama esta função para se registrar no sistema.
+  // É uma chamada RPC (Remote Procedure Call) simples: envia um RegisterRequest e espera um RegisterResponse.
+  rpc RegisterDrone (RegisterRequest) returns (RegisterResponse);
+}
+
+// A mensagem com os dados que o drone envia ao tentar se registrar.
+message RegisterRequest {
+  // Um identificador único do hardware do drone (ex: MAC Address, número de série).
+  string drone_hardware_id = 1;
+  // Uma lista das capacidades do drone (ex: "camera_4k", "lidar", "infrared_sensor").
+  repeated string capabilities = 2;
+}
+
+// A mensagem com os dados que o servidor retorna após um registro bem-sucedido.
+message RegisterResponse {
+  // O ID único que o sistema atribui ao drone para a sessão atual.
+  string assigned_drone_id = 1;
+  // O endereço de rede do broker RabbitMQ que o drone deve usar.
+  string rabbitmq_host = 2;
+  // O nome da exchange para a qual o drone deve publicar sua telemetria.
+  string telemetry_exchange = 3;
+  // O nome da exchange onde o drone deve escutar por comandos.
+  string commands_exchange = 4;
+}
